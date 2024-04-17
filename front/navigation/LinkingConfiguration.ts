@@ -8,8 +8,9 @@ export default {
         path: 'root',
         screens: {
           Home: 'home',
-          Wallet: 'wallet',
-          Debug: 'debug',
+          Rewards: 'rewards',          
+          Login: 'login',
+          Scan: 'scan',
         },
       },
       NotFound: '*',

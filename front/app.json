@@ -2,6 +2,12 @@
   "expo": {
     "name": "trustPoint",
     "slug": "trustPoint",
+    "owner": "trustpoint",
+    "extra": {
+      "eas": {
+        "projectId": "a6948b72-93bf-4335-8bf2-e6d1f30e002f"
+      }
+    },
     "scheme": "trustpoint",
     "version": "1.0.0",
     "platforms": [
@@ -13,7 +19,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/logo.jpg",
+      "image": "./assets/images/tp.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,7 +27,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.app.trustpoint",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,5 +42,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     }
+    
   }
 }

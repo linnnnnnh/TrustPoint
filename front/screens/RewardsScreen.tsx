@@ -4,7 +4,7 @@ import { Container, Title, Separator } from '../components/StyledComponents';
 export default function WalletScreen(): JSX.Element {
 	return (
 		<Container>
-			<Title>Wallet</Title>
+			<Title>Rewards</Title>
 			<Separator />
 		</Container>
 	);

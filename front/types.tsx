@@ -13,20 +13,26 @@ export type BottomTabParamList = {
 	Wallet: undefined;
 	Debug: undefined;
     Settings: undefined;
+    Rewards: undefined;
+    Scan: undefined;
 };
 
-export type TabWalletParamList = {
-	WalletScreen: undefined;
-};
+
 
 export type TabHomeParamList = {
 	HomeScreen: undefined;
 };
 
-export type TabDebugParamList = {
-	DebugScreen: undefined;
-};
+
 
 export type TabSettingsParamList = {
     SettingsScreen: undefined;
 };
+
+export type TabRewardsParamList = {
+    RewardsScreen: undefined;
+};
+
+export type TabScanParamList = {
+    ScanScreen: undefined;
+  };

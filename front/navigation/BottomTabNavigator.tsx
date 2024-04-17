@@ -2,24 +2,25 @@
  * Learn more about createBottomTabNavigator:
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
+/* disable-eslint */
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { useTheme } from 'styled-components';
 
 import TabHomeScreen from '../screens/HomeScreen';
-import TabWalletScreen from '../screens/WalletScreen';
-import TabDebugScreen from '../screens/DebugScreen';
-import TabSettingsScreen  from '../screens/SettingsScreen';
-
+import TabSettingsScreen from '../screens/SettingsScreen';
+import TabRewardsScreen from '../screens/RewardsScreen';
+import TabScanScreen from '../screens/ScanScreen';
 
 import {
 	BottomTabParamList,
 	TabHomeParamList,
-	TabWalletParamList,
 	TabSettingsParamList,
+	TabRewardsParamList,
+	TabScanParamList,
 } from '../types';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -31,23 +32,31 @@ export default function BottomTabNavigator(): JSX.Element {
 		<BottomTab.Navigator
 			initialRouteName="Home"
 			screenOptions={{ tabBarActiveTintColor: theme.colors.tint }}
-            
 		>
 			<BottomTab.Screen
 				name="Home"
 				component={TabHomeNavigator}
 				options={{
 					tabBarIcon: ({ color }: { color: string }) => (
-						<TabBarIcon name="home-outline" color={color} />
+						<TabBarIcon name="home-outline" color={color} library="Ionicons" />
 					),
 				}}
 			/>
 			<BottomTab.Screen
-				name="Wallet"
-				component={TabWalletNavigator}
+				name="Rewards"
+				component={TabRewardsNavigator}
 				options={{
 					tabBarIcon: ({ color }: { color: string }) => (
-						<TabBarIcon name="wallet-outline" color={color} />
+						<TabBarIcon name="gift-outline" color={color} library="Ionicons" />
+					),
+				}}
+			/>
+			<BottomTab.Screen
+				name="Scan"
+				component={TabScanNavigator}
+				options={{
+					tabBarIcon: ({ color }: { color: string }) => (
+						<TabBarIcon name="scan-outline" color={color} library="Ionicons" />
 					),
 				}}
 			/>
@@ -56,7 +65,7 @@ export default function BottomTabNavigator(): JSX.Element {
 				component={TabSettingsNavigator}
 				options={{
 					tabBarIcon: ({ color }: { color: string }) => (
-						<TabBarIcon name="settings-outline" color={color} />
+						<TabBarIcon name="user" color={color} library="Feather" />
 					),
 				}}
 			/>
@@ -67,10 +76,31 @@ export default function BottomTabNavigator(): JSX.Element {
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
 function TabBarIcon(props: {
-	name: React.ComponentProps<typeof Ionicons>['name'];
-	color: string;
+    name:
+        | React.ComponentProps<typeof Ionicons>['name']
+        | React.ComponentProps<typeof Feather>['name'];
+    color: string;
+    library: 'Ionicons' | 'Feather';
 }) {
-	return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
+    if (props.library === 'Ionicons') {
+        return (
+            <Ionicons
+                name={props.name}
+                size={30}
+                style={{ marginBottom: -3 }}
+                color={props.color}
+            />
+        );
+    } else if (props.library === 'Feather') {
+        return (
+            <Feather
+                name={props.name}
+                size={30}
+                style={{ marginBottom: -3 }}
+                color={props.color}
+            />
+        );
+    }
 }
 
 const TabHomeStack = createStackNavigator<TabHomeParamList>();
@@ -89,14 +119,14 @@ function TabHomeNavigator() {
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabWalletParamList>();
+const TabOneStack = createStackNavigator<TabRewardsParamList>();
 
-function TabWalletNavigator() {
+function TabRewardsNavigator() {
 	return (
 		<TabOneStack.Navigator screenOptions={{ headerShown: false }}>
 			<TabOneStack.Screen
-				name="WalletScreen"
-				component={TabWalletScreen}
+				name="RewardsScreen"
+				component={TabRewardsScreen}
 				options={{ headerTitle: 'Wallet' }}
 			/>
 		</TabOneStack.Navigator>
@@ -114,5 +144,19 @@ function TabSettingsNavigator() {
 				options={{ headerTitle: 'Settings' }}
 			/>
 		</TabSettingsStack.Navigator>
+	);
+}
+
+const TabScanStack = createStackNavigator<TabScanParamList>();
+
+function TabScanNavigator() {
+	return (
+		<TabScanStack.Navigator screenOptions={{ headerShown: false }}>
+			<TabScanStack.Screen
+				name="ScanScreen"
+				component={TabScanScreen}
+				options={{ headerTitle: 'Scan' }}
+			/>
+		</TabScanStack.Navigator>
 	);
 }
