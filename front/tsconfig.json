@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
+	"esModuleInterop": true,
       "jsx": "react",
+	 
+	  
     },
     "extends": "expo/tsconfig.base",
 	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.d.ts"]

@@ -1,7 +1,9 @@
-import "expo-dev-client";
 import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
+import 'react-native-screens';
+import "expo-dev-client";
 import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 
@@ -10,9 +12,6 @@ import useColorScheme from './hooks/useColorScheme';
 import { lightTheme, darkTheme } from './theme';
 
 import Navigation from './navigation';
-
-
-
 
 
 export default function App(): JSX.Element | null {
@@ -26,12 +25,9 @@ export default function App(): JSX.Element | null {
   } else {
     return (
       <ThemeProvider theme={colorScheme === 'light' ? lightTheme : darkTheme}>
-        <SafeAreaProvider> 
-            
-              <Navigation colorScheme={colorScheme} />     
-              
+        <SafeAreaProvider>             
+              <Navigation colorScheme={colorScheme} />       
            
-
           <StatusBar />
         </SafeAreaProvider>
       </ThemeProvider>

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "trustPoint",
-    "slug": "trustPoint",
+    "slug": "trustpoint",
     "owner": "trustpoint",
     "extra": {
       "eas": {
@@ -19,7 +19,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/tp.jpg",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
