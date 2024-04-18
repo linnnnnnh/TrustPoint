@@ -7,5 +7,6 @@
         "activityBar.background": "#47155E",
         "titleBar.activeBackground": "#631E83",
         "titleBar.activeForeground": "#FEFCFE"
-    }
+    },
+    "solidity.compileUsingRemoteVersion": "v0.8.24+commit.e11b9ed9"
 }
