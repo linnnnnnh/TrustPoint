@@ -76,16 +76,14 @@ export default function BottomTabNavigator(): JSX.Element {
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
 function TabBarIcon(props: {
-    name:
-        | React.ComponentProps<typeof Ionicons>['name']
-        | React.ComponentProps<typeof Feather>['name'];
+	name: string;
     color: string;
     library: 'Ionicons' | 'Feather';
 }) {
     if (props.library === 'Ionicons') {
         return (
             <Ionicons
-                name={props.name}
+                name={props.name as any}
                 size={30}
                 style={{ marginBottom: -3 }}
                 color={props.color}
@@ -94,7 +92,7 @@ function TabBarIcon(props: {
     } else if (props.library === 'Feather') {
         return (
             <Feather
-                name={props.name}
+                name={props.name as any}
                 size={30}
                 style={{ marginBottom: -3 }}
                 color={props.color}

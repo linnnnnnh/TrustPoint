@@ -26,8 +26,7 @@ export default function App(): JSX.Element | null {
     return (
       <ThemeProvider theme={colorScheme === 'light' ? lightTheme : darkTheme}>
         <SafeAreaProvider>             
-              <Navigation colorScheme={colorScheme} />       
-           
+              <Navigation colorScheme={colorScheme} />                  
           <StatusBar />
         </SafeAreaProvider>
       </ThemeProvider>
