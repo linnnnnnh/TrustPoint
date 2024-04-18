@@ -29,7 +29,7 @@ abstract contract TrustPointStorage is AccessControl {
         bool isMember;
     }
 
-    /// Customer memeber
+    /// Customer member
     struct Customer {
         address customerAddress;
         uint256 age;
@@ -38,7 +38,7 @@ abstract contract TrustPointStorage is AccessControl {
         uint256 totalPoints;
         bool isMember;
         /// Mapping from brand => points
-        mapping(address => uint) pointsByBrand;
+        mapping(address => uint256) pointsByBrand;
     }
 
     /// Mapping from address => member
@@ -48,12 +48,14 @@ abstract contract TrustPointStorage is AccessControl {
     /// ???Mapping from brand => (registered customers => isMember)
     mapping(address => mapping(address => bool)) public customerBrands;
 
-    /// LoyaltyProgram
-    struct LoyaltyProgram {
-        string programName;
-        string reward;
+    /// Loyalty Rewards
+    struct Reward {
+        uint256 id;
+        string name;
+        string description;
         uint256 pointsRequired;
+        bool activated;
     }
-    // Mapping from brand => LoyaltyProgram
-    mapping(address => LoyaltyProgram) public loyaltyProgramsByBrand;
+    // Mapping from id => Reward
+    mapping(uint256 => Reward) public rewards;
 }

@@ -15,24 +15,30 @@ contract TrustPointBrand is
     TrustPointStorage
 {
     /// Packed variables
-    uint8 public constant POINTS = 0; // fungible token ID
-    address public immutable owner;
+    uint8 public constant ID_POINTS = 0; // fungible token ID
+    address public brandAddress;
     bool public started;
     bool public ended;
 
-    uint256 public rewardInitialId = 100; // starting ID for NFTs
+    uint256 public rewardID; // starting ID for NFT rewards
 
-    event Start();
+    event RewardCreated(uint256 indexed rewardID);
+    event PointsEarned(address indexed customer, uint256 indexed amount);
+    event RewardChosen(address indexed customer, uint256 indexed rewardID);
+    event RewardUsed(address indexed customer, uint256 indexed rewardID);
     event End();
 
     /// @dev fill in the uri!!!
-    constructor(bytes32 _brandName, BrandBizType _businessType) ERC1155("") {
-        owner = msg.sender;
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(BRAND_ROLE, msg.sender);
-        _grantRole(BURNER_ROLE, msg.sender);
-        brands[msg.sender] = Brand({
-            brandAddress: msg.sender,
+    constructor(address _brandAddress, bytes32 _brandName, BrandBizType _businessType) ERC1155("") {
+        brandAddress = _brandAddress;
+        _grantRole(DEFAULT_ADMIN_ROLE, _brandAddress);
+        _grantRole(BRAND_ROLE, _brandAddress);
+        _grantRole(BURNER_ROLE, _brandAddress);
+
+        rewardID = 1;
+
+        brands[_brandAddress] = Brand({
+            brandAddress: _brandAddress,
             brandName: _brandName,
             businessType: _businessType,
             isMember: true
@@ -40,56 +46,92 @@ contract TrustPointBrand is
     }
 
     /// Create the loyalty program and start it
-    function createLoyaltyProgram(
-        string memory _programName,
-        string memory _reward,
+    function createNewReward(
+        string memory _name,
+        string memory _description,
         uint256 _pointsRequired
     ) public onlyRole(BRAND_ROLE) {
-        loyaltyProgramsByBrand[msg.sender] = LoyaltyProgram({
-            programName: _programName,
-            reward: _reward,
-            pointsRequired: _pointsRequired
+        rewards[rewardID] = Reward({
+            id: rewardID,
+            name: _name,
+            description: _description,
+            pointsRequired: _pointsRequired,
+            activated: true
         });
 
+        emit RewardCreated(rewardID);
+
+        rewardID++;
         started = true;
-        emit Start();
+    }
+
+    function activateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
+        require(rewards[_rewardID].id != 0, "Reward not yet created");
+        require(rewards[_rewardID].activated == false, "Reward already activated");
+
+        rewards[_rewardID].activated == true;
+    }
+
+    function deactivateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
+        require(rewards[_rewardID].id != 0, "Reward not yet created");
+        require(rewards[_rewardID].activated == true, "Reward already deactivated");
+
+        rewards[_rewardID].activated == false;
     }
 
     /// Minting loyalty points (fungible tokens)
     function earnPoints(
-        address to,
-        uint256 points,
-        bytes memory data
+        address _customer,
+        uint256 _points,
+        bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
         require(started, "No program available.");
-        _mint(to, POINTS, points, data);
-        customers[to].totalPoints += points;
-        customers[to].pointsByBrand[msg.sender] += points;
+
+        _mint(_customer, ID_POINTS, _points, _data);
+
+        customers[_customer].totalPoints += _points;
+        customers[_customer].pointsByBrand[msg.sender] += _points;
+
+        emit PointsEarned(_customer, _points);
     }
 
-    /// Redeem the reward for customer (NFT)
-    function redeemReward(
-        address to,
-        bytes memory data
+    /// Choose the reward for customer (NFT)
+    function chooseReward(
+        address _customer,
+        uint256 _rewardID,
+        bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
-        uint256 pointsToRedeem = loyaltyProgramsByBrand[msg.sender]
-            .pointsRequired;
-        require(rewardInitialId >= 100, "Invalid ID for NFT");
+        require(_customer != address(0), "Invalid address");
+        require(rewards[_rewardID].activated == true, "Reward not activated");
+
+        uint256 rewardThreshold = rewards[_rewardID].pointsRequired;
+
         require(
-            customers[to].pointsByBrand[msg.sender] >= pointsToRedeem,
-            "Not enough points."
+            customers[_customer].pointsByBrand[msg.sender] >= rewardThreshold,
+            "Not enough points"
         );
 
+        /// mint the reward NFT
+        _mint(_customer, _rewardID, 1, _data);
+
         /// Decrement the points from the customer record
-        customers[to].totalPoints -= pointsToRedeem;
-        customers[to].pointsByBrand[msg.sender] -= pointsToRedeem;
+        customers[_customer].totalPoints -= rewardThreshold;
+        customers[_customer].pointsByBrand[msg.sender] -= rewardThreshold;
 
-        /// mint the reward NFT with a unique ID
-        _mint(to, rewardInitialId, 1, data);
-        rewardInitialId++;
+        /// Burn the fungible tokens (points)
+        _burnTokens(_customer, ID_POINTS, rewardThreshold);
 
-        /// Burn the fungible tokens(POINTS)
-        burnTokens(to, POINTS, pointsToRedeem);
+        emit RewardChosen(_customer, _rewardID);
+    }
+
+    function customerUsedReward(address _customer, uint256 _rewardID) public onlyRole(BRAND_ROLE) {
+        require(_customer != address(0), "Invalid address");
+        require(rewards[_rewardID].id != 0, "Reward doesn't exists");
+        require(balanceOf(_customer, _rewardID) >= 1, "Customer don't have this reward");
+
+        _burnTokens(_customer, _rewardID, 1);
+
+        emit RewardUsed(_customer, _rewardID);
     }
 
     /// End the loyalty program
@@ -121,16 +163,24 @@ contract TrustPointBrand is
         return super.supportsInterface(interfaceId);
     }
 
+    function getRewardFromID(uint256 _rewardID) public returns (Reward) {
+        return rewards[_rewardID];
+    }
+
+    function getCustomerPoints(address _customer) public returns (uint256) {
+        return customers[_customer].pointsByBrand[brandAddress];
+    }
+
     /*///////////////////////////////////////////////////////////////
                             Internal functions
     //////////////////////////////////////////////////////////////*/
 
     /// Grant the permission to Brand to burn Customer tokens
-    function burnTokens(
-        address account,
-        uint256 id,
-        uint256 value
+    function _burnTokens(
+        address _account,
+        uint256 _id,
+        uint256 _value
     ) internal onlyRole(BURNER_ROLE) {
-        _burn(account, id, value);
+        _burn(_account, _id, _value);
     }
 }
