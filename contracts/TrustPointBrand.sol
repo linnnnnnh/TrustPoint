@@ -5,7 +5,6 @@ pragma solidity ^0.8.20;
 // import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "./TrustPointStorage.sol";
 
@@ -15,15 +14,13 @@ contract TrustPointBrand is
     ERC1155Burnable,
     TrustPointStorage
 {
-    bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
-    bytes32 public constant BRAND_ROLE = keccak256("BRAND_ROLE");
-    bytes32 public constant CUSTOMER_ROLE = keccak256("CUSTOMER_ROLE");
-
+    /// Packed variables
+    uint8 public constant POINTS = 0; // fungible token ID
     address public immutable owner;
-
-    uint256 public endAt;
     bool public started;
     bool public ended;
+
+    uint256 public rewardInitialId = 100; // starting ID for NFTs
 
     event Start();
     event End();
@@ -60,12 +57,11 @@ contract TrustPointBrand is
     /// Minting loyalty points (fungible tokens)
     function earnPoints(
         address to,
-        uint256 id,
         uint256 points,
         bytes memory data
     ) public onlyRole(BRAND_ROLE) {
         require(started, "No program available.");
-        _mint(to, id, points, data);
+        _mint(to, POINTS, points, data);
         customers[to].totalPoints += points;
         customers[to].pointsByBrand[msg.sender] += points;
     }
@@ -73,30 +69,32 @@ contract TrustPointBrand is
     /// Redeem the reward for customer (NFT)
     function redeemReward(
         address to,
-        uint256 id,
         bytes memory data
     ) public onlyRole(BRAND_ROLE) {
         uint256 pointsToRedeem = loyaltyProgramsByBrand[msg.sender]
             .pointsRequired;
+        require(rewardInitialId >= 100, "Invalid ID for NFT");
         require(
             customers[to].pointsByBrand[msg.sender] >= pointsToRedeem,
             "Not enough points."
         );
 
-        /// mint the NFT
-        _mint(to, id, 1, data);
-
-        /// Burn the fungible tokens(points)
-        _burn(to, id, pointsToRedeem);
-
+        /// Decrement the points from the customer record
         customers[to].totalPoints -= pointsToRedeem;
         customers[to].pointsByBrand[msg.sender] -= pointsToRedeem;
+
+        /// mint the reward NFT with a unique ID
+        _mint(to, rewardInitialId, 1, data);
+        rewardInitialId++;
+
+        /// Burn the fungible tokens(POINTS)
+        _burn(to, POINTS, pointsToRedeem);
     }
 
     /// End the loyalty program
     function endProgram() public onlyRole(BRAND_ROLE) {
-        require(started, "not started");
-        require(!ended, "ended");
+        require(started, "Program not started");
+        require(!ended, "Program already ended");
         ended = true;
         started = false;
         emit End();
@@ -120,5 +118,18 @@ contract TrustPointBrand is
         bytes4 interfaceId
     ) public view override(ERC1155, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                            Internal functions
+    //////////////////////////////////////////////////////////////*/
+
+    /// Grant the permission to Brand to burn Customer tokens
+    function _burn(
+        address account,
+        uint256 id,
+        uint256 value
+    ) internal override onlyRole(BRAND_ROLE) {
+        super._burn(account, id, value);
     }
 }
