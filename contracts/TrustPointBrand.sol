@@ -30,6 +30,7 @@ contract TrustPointBrand is
         owner = msg.sender;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(BRAND_ROLE, msg.sender);
+        _grantRole(BURNER_ROLE, msg.sender);
         brands[msg.sender] = Brand({
             brandAddress: msg.sender,
             brandName: _brandName,
@@ -88,7 +89,7 @@ contract TrustPointBrand is
         rewardInitialId++;
 
         /// Burn the fungible tokens(POINTS)
-        _burn(to, POINTS, pointsToRedeem);
+        burnTokens(to, POINTS, pointsToRedeem);
     }
 
     /// End the loyalty program
@@ -125,11 +126,11 @@ contract TrustPointBrand is
     //////////////////////////////////////////////////////////////*/
 
     /// Grant the permission to Brand to burn Customer tokens
-    function _burn(
+    function burnTokens(
         address account,
         uint256 id,
         uint256 value
-    ) internal override onlyRole(BRAND_ROLE) {
-        super._burn(account, id, value);
+    ) internal onlyRole(BURNER_ROLE) {
+        _burn(account, id, value);
     }
 }

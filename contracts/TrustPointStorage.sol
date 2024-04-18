@@ -9,6 +9,7 @@ abstract contract TrustPointStorage is AccessControl {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant BRAND_ROLE = keccak256("BRAND_ROLE");
     bytes32 public constant CUSTOMER_ROLE = keccak256("CUSTOMER_ROLE");
+    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
     /// Brand business type
     enum BrandBizType {
