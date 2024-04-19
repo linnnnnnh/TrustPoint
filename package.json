@@ -16,6 +16,8 @@
     "hardhat": "^2.22.2"
   },
   "dependencies": {
+    "@ethsign/sign-protocol-evm": "^1.1.1",
+    "@ethsign/sp-sdk": "^0.3.29",
     "@openzeppelin/contracts": "^5.0.2",
     "dotenv": "^16.4.5"
   }

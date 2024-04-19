@@ -1,13 +1,17 @@
 const hre = require("hardhat");
 
-CONTRACT_ADDR_BRAND = "0x443cf8612eC468D18AC941f47983252b7A70f40F";
+CONTRACT_ADDR_BRAND = "0x51F3c2C302273e60fc69C1c6E40339f0Bc17cFBE";
 
 async function main() {
     //hardhat-ethers
-    const contract = await hre.ethers.getContractAt("Score", CONTRACT_ADDR_BRAND);
+    const contract = await hre.ethers.getContractAt("TrustPointCustomer", CONTRACT_ADDR_BRAND);
 
-    //à changer
-    const tx = await contract.setPlayerInfo('Luca', 200);
+    const customerAddr = "0x966907738C4b58a4956795fcf185569922262f81";
+    const age = 30;
+    const gender = hre.ethers.encodeBytes32String("F");
+    const country = hre.ethers.encodeBytes32String("France");
+
+    const tx = await contract.registerCustomer(customerAddr, age, gender, country);
     console.log(tx);
 }
 
