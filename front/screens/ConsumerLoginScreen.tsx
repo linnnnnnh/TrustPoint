@@ -9,6 +9,7 @@ import {
 	TextInput,
 	TouchableOpacity,
 } from 'react-native';
+import Web3Auth from '../components/Web3auth';
 
 const ConsumerLoginScreen = ({ navigation }) => {
 	const [email, setEmail] = useState('');
@@ -55,10 +56,8 @@ const ConsumerLoginScreen = ({ navigation }) => {
 				</View>
 				<Text>Or</Text>
 				<View style={styles.iconContainer}>
-					<Image
-						style={styles.icon}
-						source={require('../assets/images/icons/walletconnectW.png')}
-					/>
+                    <Web3Auth onConnect={() => console.log('Web3 Connected')} />
+					
 					<Image
 						style={styles.icon}
 						source={require('../assets/images/icons/metamaskW.png')}
@@ -92,9 +91,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	icon: {
-		width: 40,
-		height: 40,
-		margin: 10,
+		width: 45,
+		height: 45,
+	marginLeft: 10,
 	},
 	title: {
 		fontSize: 20,
