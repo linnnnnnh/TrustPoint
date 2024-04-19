@@ -21,7 +21,10 @@ import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 // import { TorusWalletAdapter, TorusWalletOptions } from "@web3auth/torus-evm-adapter";
 // import { CoinbaseAdapter, CoinbaseAdapterOptions } from "@web3auth/coinbase-adapter";
 
-const clientId = "BPi5PB_UiIZ-cPz1GtV5i1I2iOSOHuimiXBI0e-Oe_u6X3oVAbCiAZOTEBtTXw4tsluTITPqA8zMsfxIKMjiqNQ"; // get from https://dashboard.web3auth.io
+// const clientId = "BPi5PB_UiIZ-cPz1GtV5i1I2iOSOHuimiXBI0e-Oe_u6X3oVAbCiAZOTEBtTXw4tsluTITPqA8zMsfxIKMjiqNQ"; // testget from https://dashboard.web3auth.io
+
+const clientId =
+  "BLsAgZAaq1X0jFUxiKcWkMO9EjlA5Qb7HjVbWDdHLLHQsyovE9V9daN2ul08Sj9NxUG770uOeoKtYUS0pksWItY";
 
 const chainConfig = {
   chainId: "0x13882", // Please use 0x1 for ETH Mainnet, 0x89 for Polygon Mainnet
@@ -34,7 +37,9 @@ const chainConfig = {
   logo: "https://cryptologos.cc/logos/polygon-matic-logo.png",
 };
 
-const privateKeyProvider = new EthereumPrivateKeyProvider({ config: { chainConfig } });
+const privateKeyProvider = new EthereumPrivateKeyProvider({
+  config: { chainConfig },
+});
 
 const web3AuthOptions: Web3AuthOptions = {
   clientId,
@@ -59,7 +64,8 @@ const web3AuthOptions: Web3AuthOptions = {
 
 function Web3AuthLogin() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-  const [walletServicesPlugin, setWalletServicesPlugin] = useState<WalletServicesPlugin | null>(null);
+  const [walletServicesPlugin, setWalletServicesPlugin] =
+    useState<WalletServicesPlugin | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -113,7 +119,9 @@ function Web3AuthLogin() {
         // read more about adapters here: https://web3auth.io/docs/sdk/pnp/web/adapters/
 
         // Only when you want to add External default adapters, which includes WalletConnect, Metamask, Torus EVM Wallet
-        const adapters = await getDefaultExternalAdapters({ options: web3AuthOptions });
+        const adapters = await getDefaultExternalAdapters({
+          options: web3AuthOptions,
+        });
         adapters.forEach((adapter) => {
           web3auth.configureAdapter(adapter);
         });
@@ -191,11 +199,13 @@ function Web3AuthLogin() {
 
   const authenticateUser = async () => {
     if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
+      // uiConsole("web3auth not initialized yet");
+      console.log("web3auth not initialized yet");
       return;
     }
     const idToken = await web3auth.authenticateUser();
-    uiConsole(idToken);
+    // uiConsole(idToken);
+    console.log(idToken);
   };
 
   const getUserInfo = async () => {
@@ -368,107 +378,53 @@ function Web3AuthLogin() {
 
   const loggedInView = (
     <>
-      <div className="flex-container">
+      <div className="flex-container flex flex-col justify-center items-center">
         <div>
-          <button onClick={getUserInfo} className="card">
+          <button
+            onClick={getUserInfo}
+            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+          >
             Get User Info
           </button>
         </div>
         <div>
-          <button onClick={authenticateUser} className="card">
+          <button
+            onClick={authenticateUser}
+            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+          >
             Get ID Token
           </button>
         </div>
         <div>
-          <button onClick={showWalletUi} className="card">
-            Show Wallet UI
-          </button>
-        </div>
-        <div>
-          <button onClick={showWCM} className="card">
-            Show Wallet Connect
-          </button>
-        </div>
-        <div>
-          <button onClick={showCheckout} className="card">
-            Show Checkout
-          </button>
-        </div>
-        <div>
-          <button onClick={getChainId} className="card">
-            Get Chain ID
-          </button>
-        </div>
-        <div>
-          <button onClick={addChain} className="card">
-            Add Chain
-          </button>
-        </div>
-        <div>
-          <button onClick={switchChain} className="card">
-            Switch Chain
-          </button>
-        </div>
-        <div>
-          <button onClick={getAccounts} className="card">
-            Get Accounts
-          </button>
-        </div>
-        <div>
-          <button onClick={getBalance} className="card">
-            Get Balance
-          </button>
-        </div>
-        <div>
-          <button onClick={signMessage} className="card">
-            Sign Message
-          </button>
-        </div>
-        <div>
-          <button onClick={sendTransaction} className="card">
-            Send Transaction
-          </button>
-        </div>
-        <div>
-          <button onClick={readContract} className="card">
-            Read Contract
-          </button>
-        </div>
-        <div>
-          <button onClick={writeContract} className="card">
-            Write Contract
-          </button>
-        </div>
-        <div>
-          <button onClick={getPrivateKey} className="card">
-            Get Private Key
-          </button>
-        </div>
-        <div>
-          <button onClick={logout} className="card">
+          <button
+            onClick={logout}
+            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Log Out
           </button>
         </div>
       </div>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
-        <p style={{ whiteSpace: "pre-line" }}></p>
+        <p
+          className="w-30"
+          style={{ whiteSpace: "pre-line", width: "30%" }}
+        ></p>
       </div>
     </>
   );
 
   const unloggedInView = (
-    <button onClick={login} className="card bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <button
+      onClick={login}
+      className="card bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
       Login
     </button>
   );
 
   return (
     <div className="container">
-     
-
       <div className="grid">{loggedIn ? loggedInView : unloggedInView}</div>
-
-     
     </div>
   );
 }
