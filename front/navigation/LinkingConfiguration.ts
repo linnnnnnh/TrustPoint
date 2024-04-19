@@ -9,7 +9,7 @@ export default {
         screens: {
           Home: 'home',
           Rewards: 'rewards',          
-          Login: 'login',
+          ConsumerLoginScreen: 'ConsumerLoginScreen',
           Scan: 'scan',
         },
       },

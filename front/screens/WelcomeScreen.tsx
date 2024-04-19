@@ -20,13 +20,13 @@ export default function WelcomeScreen({ navigation }) {
 				<Text style={styles.title}>Welcome!! You are</Text>
 				<TouchableOpacity
 					style={styles.button}
-					onPress={() => navigation.navigate('BrandAuth')}
+					onPress={() => navigation.navigate('BrandLoginScreen')}
 				>
 					<Text style={styles.buttonText}>Brand</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					style={styles.buttonConsumer}
-					onPress={() => navigation.navigate('ConsumerAuth')}
+					style={styles.button}
+					onPress={() => navigation.navigate('ConsumerLoginScreen')}
 				>
 					<Text style={styles.buttonText}>Consumer</Text>
 				</TouchableOpacity>
@@ -37,25 +37,18 @@ export default function WelcomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: '#006adc',
+		backgroundColor: '#fff',
 		padding: 10,
 		borderRadius: 25,
+    borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		margin: 10,
     width:'80%',
 	},
-  buttonConsumer: {
-    backgroundColor: '#cd5780',
-    padding: 10,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    width:'80%',
-  },
+
 	buttonText: {
-		color: 'white',
+		color: '#5d11cf',
 		fontSize: 16,
 	},
 	container: {

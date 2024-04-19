@@ -5,6 +5,7 @@
 
 export type RootStackParamList = {
     Welcome: undefined;
+    ConsumerLoginScreen: undefined;
 	Root: undefined;
 	NotFound: undefined;
 };
