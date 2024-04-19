@@ -23,7 +23,7 @@ export default function Navigation({
 	colorScheme,
 }: {
 	colorScheme: ColorSchemeName;
-}): JSX.Element {
+}) {
 	return (
 		<NavigationContainer
 			linking={LinkingConfiguration}
@@ -40,7 +40,10 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
 	return (
-		<Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Welcome">
+		<Stack.Navigator
+			screenOptions={{ headerShown: false }}
+			initialRouteName="Welcome"
+		>
 			<Stack.Screen name="Welcome" component={WelcomeScreen} />
 			<Stack.Screen name="Root" component={BottomTabNavigator} />
 			<Stack.Screen

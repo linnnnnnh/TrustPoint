@@ -8,6 +8,10 @@
         "projectId": "a6948b72-93bf-4335-8bf2-e6d1f30e002f"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
     "scheme": "trustpoint",
     "version": "1.0.0",
     "platforms": [
@@ -38,10 +42,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
+    
     
   }
 }

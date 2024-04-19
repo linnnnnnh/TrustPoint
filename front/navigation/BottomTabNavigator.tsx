@@ -25,7 +25,7 @@ import {
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
-export default function BottomTabNavigator(): JSX.Element {
+export default function BottomTabNavigator() {
 	const theme = useTheme();
 
 	return (

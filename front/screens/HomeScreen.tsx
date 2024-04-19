@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Image,  StyleSheet } from 'react-native';
 import { Container, Title, Separator } from '../components/StyledComponents';
 
-export default function HomeScreen(): JSX.Element {
+export default function HomeScreen() {
 	return (
 		<Container>
 <Image

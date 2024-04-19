@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Image, StyleSheet, Text, View } from 'react-native';
+import "../global.css";
 
 export default function WelcomeScreen({ navigation }) {
   return (
