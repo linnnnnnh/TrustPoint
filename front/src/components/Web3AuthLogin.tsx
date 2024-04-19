@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import {Button} from "flowbite-react";
 // import "./Web3AuthLogin.css";
 // import RPC from "./viem"; // for using viem
 // import RPC from "./web3RPC";
@@ -379,29 +380,14 @@ function Web3AuthLogin() {
   const loggedInView = (
     <>
       <div className="flex-container flex flex-col justify-center items-center">
+        
         <div>
-          <button
-            onClick={getUserInfo}
-            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-          >
-            Get User Info
-          </button>
-        </div>
-        <div>
-          <button
-            onClick={authenticateUser}
-            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-          >
-            Get ID Token
-          </button>
-        </div>
-        <div>
-          <button
+          <Button
             onClick={logout}
-            className="card bg-blue-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            gradientDuoTone="greenToBlue"
           >
             Log Out
-          </button>
+          </Button>
         </div>
       </div>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
@@ -414,12 +400,12 @@ function Web3AuthLogin() {
   );
 
   const unloggedInView = (
-    <button
-      onClick={login}
-      className="card bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    <Button
+      onClick={login}      
+      gradientDuoTone="greenToBlue"
     >
       Login
-    </button>
+    </Button>
   );
 
   return (
