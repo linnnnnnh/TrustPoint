@@ -2,11 +2,11 @@
 module.exports = {
   // NOTE: Update this to include the paths to all of your component files.
   content: [
-    './front/App.tsx',
-    './front/screens/**/*.{ts,tsx}',
-    './front/components/**/*.{ts,tsx}',
-    './front/hooks/**/*.{ts,tsx}',
-    './front/navigation/**/*.{ts,tsx}',
+    './App.tsx',
+    './screens/**/*.{ts,tsx, js, jsx}',
+    './components/**/*.{ts,tsx, js, jsx}',
+    './hooks/**/*.{ts,tsx, js, jsx}',
+    './navigation/**/*.{ts,tsx, js, jsx}',
   ],
   presets: [require("nativewind/preset")],
   theme: {
