@@ -29,7 +29,11 @@ contract TrustPointBrand is
     event End();
 
     /// @dev fill in the uri!!!
-    constructor(address _brandAddress, bytes32 _brandName, BrandBizType _businessType) ERC1155("") {
+    constructor(
+        address _brandAddress,
+        bytes32 _brandName,
+        BrandBizType _businessType
+    ) ERC1155("") {
         brandAddress = _brandAddress;
         _grantRole(DEFAULT_ADMIN_ROLE, _brandAddress);
         _grantRole(BRAND_ROLE, _brandAddress);
@@ -67,16 +71,22 @@ contract TrustPointBrand is
 
     function activateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
         require(rewards[_rewardID].id != 0, "Reward not yet created");
-        require(rewards[_rewardID].activated == false, "Reward already activated");
+        require(
+            rewards[_rewardID].activated == false,
+            "Reward already activated"
+        );
 
-        rewards[_rewardID].activated == true;
+        rewards[_rewardID].activated = true;
     }
 
     function deactivateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
         require(rewards[_rewardID].id != 0, "Reward not yet created");
-        require(rewards[_rewardID].activated == true, "Reward already deactivated");
+        require(
+            rewards[_rewardID].activated == true,
+            "Reward already deactivated"
+        );
 
-        rewards[_rewardID].activated == false;
+        rewards[_rewardID].activated = false;
     }
 
     /// Minting loyalty points (fungible tokens)
@@ -124,10 +134,16 @@ contract TrustPointBrand is
         emit RewardChosen(_customer, _rewardID);
     }
 
-    function customerUsedReward(address _customer, uint256 _rewardID) public onlyRole(BRAND_ROLE) {
+    function customerUsedReward(
+        address _customer,
+        uint256 _rewardID
+    ) public onlyRole(BRAND_ROLE) {
         require(_customer != address(0), "Invalid address");
         require(rewards[_rewardID].id != 0, "Reward doesn't exists");
-        require(balanceOf(_customer, _rewardID) >= 1, "Customer don't have this reward");
+        require(
+            balanceOf(_customer, _rewardID) >= 1,
+            "Customer don't have this reward"
+        );
 
         _burnTokens(_customer, _rewardID, 1);
 
@@ -163,11 +179,13 @@ contract TrustPointBrand is
         return super.supportsInterface(interfaceId);
     }
 
-    function getRewardFromID(uint256 _rewardID) public returns (Reward) {
+    function getRewardFromID(
+        uint256 _rewardID
+    ) public view returns (Reward memory) {
         return rewards[_rewardID];
     }
 
-    function getCustomerPoints(address _customer) public returns (uint256) {
+    function getCustomerPoints(address _customer) public view returns (uint256) {
         return customers[_customer].pointsByBrand[brandAddress];
     }
 

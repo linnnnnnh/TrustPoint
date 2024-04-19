@@ -1,11 +1,12 @@
 const hre = require("hardhat");
 
-CONTRACT_ADDR = "0x66CB36Fce477BD0a20DEf5Ad366f0D0E49b0B9F6";
+CONTRACT_ADDR_BRAND = "0x443cf8612eC468D18AC941f47983252b7A70f40F";
 
 async function main() {
     //hardhat-ethers
-    const contract = await hre.ethers.getContractAt("Score", CONTRACT_ADDR);
+    const contract = await hre.ethers.getContractAt("Score", CONTRACT_ADDR_BRAND);
 
+    //à changer
     const tx = await contract.setPlayerInfo('Luca', 200);
     console.log(tx);
 }
