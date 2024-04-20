@@ -26,6 +26,8 @@ contract TrustPointCustomer is TrustPointStorage {
         customer.country = _country;
         customer.isMember = true;
         customer.totalPoints = 10;
+
+        allCustomers.push(_addr);
     }
 
     /// Update customer details
@@ -41,5 +43,46 @@ contract TrustPointCustomer is TrustPointStorage {
         customer.age = _age;
         customer.gender = _gender;
         customer.country = _country;
+    }
+
+    /// Get list of customers holding x points of a specific brand
+    function getCustomersPerBrand(
+        address _brand,
+        uint256 _pointsEarned
+    ) public view returns (address[] memory) {
+        uint256 count = countCustomersPerBrand(_brand, _pointsEarned);
+
+        address[] memory potentialCustomers = new address[](count);
+
+        uint256 index = 0;
+        for (uint256 i; i < allCustomers.length && index < count; ) {
+            address c = allCustomers[i];
+
+            if (customers[c].pointsByBrand[_brand] >= _pointsEarned) {
+                potentialCustomers[index] = allCustomers[i];
+                index++;
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+        return potentialCustomers;
+    }
+
+    /// Function called by getCustomersPerBrand
+    function countCustomersPerBrand(
+        address _brand,
+        uint256 _pointsEarned
+    ) internal view returns (uint256) {
+        uint256 count = 0;
+        for (uint256 i; i < allCustomers.length; ) {
+            address c = allCustomers[i];
+
+            if (customers[c].pointsByBrand[_brand] >= _pointsEarned) {
+                ++count;
+            }
+        }
+        return count;
     }
 }

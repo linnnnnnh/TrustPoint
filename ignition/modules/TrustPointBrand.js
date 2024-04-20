@@ -3,7 +3,7 @@ const hre = require("hardhat");
 
 module.exports = buildModule("TrustPointBrandModule", (m) => {
     const brandName = hre.ethers.encodeBytes32String("KBrand");
-    const brandAddr = "0x0475Bd09c8dF8C759de6dD8ec5A7285818a680Fd";
+    const brandAddr = "0x36b89b49217E7f4F67C16abEb7F473A50F6cF1AC";
     
     const trustPointBrand = m.contract("TrustPointBrand", [brandAddr, brandName, 0]);
   
