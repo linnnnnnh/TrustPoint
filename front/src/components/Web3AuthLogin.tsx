@@ -31,6 +31,7 @@ const clientId =
   "BLsAgZAaq1X0jFUxiKcWkMO9EjlA5Qb7HjVbWDdHLLHQsyovE9V9daN2ul08Sj9NxUG770uOeoKtYUS0pksWItY";
 
 // chainConfig for Polygon Mainnet
+/*
 const chainConfig = {
   chainId: "0x13882", // Please use 0x1 for ETH Mainnet, 0x89 for Polygon Mainnet
   rpcTarget: "https://rpc.ankr.com/polygon_amoy",
@@ -41,22 +42,25 @@ const chainConfig = {
   tickerName: "MATIC",
   logo: "https://cryptologos.cc/logos/polygon-matic-logo.png",
 };
+*/
 
-// chainConfig for Arbitrum Testnet
-/*
+
+// chainConfig for Arbitrum Sepolia
+
 const chainConfig = {  
-  chainId: "0x66eee", // hex of 421611
-  rpcTarget: "https://rpc.ankr.com/arbitrum_sepolia",
+  chainId: "0x66eee", // hex of 421614
+  rpcTarget: "https://sepolia-rollup.arbitrum.io/rpc",
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   // Avoid using public rpcTarget in production.
   // Use services like Infura, Quicknode etc
-  displayName: "Arbitrum Testnet",
-  blockExplorerUrl: "`https://sepolia-explorer.arbitrum.io`",
+  displayName: "Arbitrum Sepolia",
+  blockExplorerUrl: "https://sepolia.arbiscan.io",
   ticker: "ETH",
   tickerName: "ETH",
-  // logo: "https://cryptologos.cc/logos/arbitrum-arb-logo.png",
+  logo: "https://cryptologos.cc/logos/arbitrum-arb-logo.png",
 };
-*/
+
+
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: { chainConfig },
