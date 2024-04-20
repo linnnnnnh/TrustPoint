@@ -1,44 +1,49 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { IProvider } from "@web3auth/base";
-import { Web3Auth } from "@web3auth/modal";
-import RPC from "../components/viem"
+import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 
+// Create UserContext
+const UserContext = createContext({
+  isConnected: false,
+  token: null as string | null,
+});
 
-
-// 1. Créez un nouveau contexte
-export const UserContext = createContext(null);
-
-// 2. Créez un composant Provider
-export const UserProvider = (({ children }: { children: ReactNode }) => {
-  const [address, setAddress] = useState(null);
-  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
-
-  function uiConsole(...args: unknown[]): void {
-    const el = document.querySelector("#console>p");
-    if (el) {
-      el.innerHTML = JSON.stringify(args || {}, null, 2);
-    }
-  }
-
-  const getAccounts = async () => {
-    if (!web3auth?.provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const rpc = new RPC(web3auth.provider as IProvider);
-    const address = await rpc.getAccounts();
-    setAddress(address);
-  };
+// Create UserContextProvider component
+export const UserContextProvider = ({ children }: { children: ReactNode }) => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    getAccounts();
+    let walletAddressToken: string | null = null;
+
+    // Loop through all keys in localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+
+      // Check if key contains wallet address
+      if (key && key.includes('metamask')) {
+        walletAddressToken = localStorage.getItem(key);
+        break;
+      }
+    }
+
+    setIsConnected(walletAddressToken != null);
+    setToken(walletAddressToken);
+
+    // Log all items in localStorage
+    console.log('All items in localStorage:', Object.entries(localStorage));
+
+    if (walletAddressToken) {
+      console.log('Connected with token:', walletAddressToken);
+    } else {
+      console.log('No connection detected.');
+    }
   }, []);
 
   return (
-    <UserContext.Provider value={address}>
+    <UserContext.Provider value={{ isConnected, token }}>
       {children}
     </UserContext.Provider>
   );
-});
+};
 
-
+// Create a hook to use the UserContext, this is just a shortcut
+export const useUserContext = () => useContext(UserContext);
