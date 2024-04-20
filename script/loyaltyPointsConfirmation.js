@@ -1,14 +1,20 @@
 const hre = require("hardhat");
 
-CONTRACT_ADDR_POINTS_Confirmation = "0x8Dcf23C761e6A5AA6d3a8fA4E492e85e962530Fc";
+CONTRACT_ADDR_POINTS_CONFIRMATION = "0x3419350265Ff06b824698813df806A8d7Cb6F9fC";
 
 async function main() {
-    //hardhat-ethers
-    const contract = await hre.ethers.getContractAt("LoyaltyPointsConfirmation", CONTRACT_ADDR_POINTS_Confirmation);
+    const contract = await hre.ethers.getContractAt("TrustPointBrand", CONTRACT_ADDR_POINTS_CONFIRMATION);
 
-    const customerAddr = "";
-    // à changer
-    const tx = await contract.confirmPoints(customerAddr, 2000);
+    const customer = "0xdC4B924b566c380E5e090150b176e42D58ec172a";
+    const brandAddr = "0x0475Bd09c8dF8C759de6dD8ec5A7285818a680Fd";
+    const brandName = "Brand XYZ";
+    const pointsThreshold = 1000;
+    const schemaId1 = 26;
+    const schemaId2 = 46;
+
+    // const tx = await contract.confirmPointsForRewards(customer, 3000, brandAddr, schemaId1);
+    // console.log(tx);
+    const tx = await contract.targetPotentialCustomers(brandName, brandAddr, pointsThreshold, schemaId2);
     console.log(tx);
 }
 

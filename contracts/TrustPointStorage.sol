@@ -45,6 +45,9 @@ abstract contract TrustPointStorage is AccessControl {
     mapping(address => Brand) public brands;
     mapping(address => Customer) public customers;
 
+    /// Array to store all Customer struct of the plateform 
+    address[] public allCustomers;
+
     /// ???Mapping from brand => (registered customers => isMember)
     mapping(address => mapping(address => bool)) public customerBrands;
 

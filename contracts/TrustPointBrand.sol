@@ -6,13 +6,13 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
-import "./TrustPointStorage.sol";
+import "./SignProtocolForLoyalty.sol";
 
 contract TrustPointBrand is
     ERC1155,
     AccessControl,
     ERC1155Burnable,
-    TrustPointStorage
+    SignProtocolForLoyalty
 {
     /// Packed variables
     uint8 public constant ID_POINTS = 0; // fungible token ID
@@ -32,8 +32,9 @@ contract TrustPointBrand is
     constructor(
         address _brandAddress,
         bytes32 _brandName,
-        BrandBizType _businessType
-    ) ERC1155("") {
+        BrandBizType _businessType,
+        address _signProtocolAddress
+    ) ERC1155("") SignProtocolForLoyalty(_signProtocolAddress) {
         brandAddress = _brandAddress;
         _grantRole(DEFAULT_ADMIN_ROLE, _brandAddress);
         _grantRole(BRAND_ROLE, _brandAddress);
@@ -151,27 +152,27 @@ contract TrustPointBrand is
     }
 
     /// End the loyalty program
-    function endProgram() public onlyRole(BRAND_ROLE) {
-        require(started, "Program not started");
-        require(!ended, "Program already ended");
-        ended = true;
-        started = false;
-        emit End();
-    }
+    // function endProgram() public onlyRole(BRAND_ROLE) {
+    //     require(started, "Program not started");
+    //     require(!ended, "Program already ended");
+    //     ended = true;
+    //     started = false;
+    //     emit End();
+    // }
 
     /// @dev can be transformed into an airdrop function with condition
-    function mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory points,
-        bytes memory data
-    ) public onlyRole(BRAND_ROLE) {
-        _mintBatch(to, ids, points, data);
-    }
+    // function mintBatch(
+    //     address to,
+    //     uint256[] memory ids,
+    //     uint256[] memory points,
+    //     bytes memory data
+    // ) public onlyRole(BRAND_ROLE) {
+    //     _mintBatch(to, ids, points, data);
+    // }
 
-    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
-        _setURI(newuri);
-    }
+    // function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
+    //     _setURI(newuri);
+    // }
 
     function supportsInterface(
         bytes4 interfaceId
@@ -179,13 +180,15 @@ contract TrustPointBrand is
         return super.supportsInterface(interfaceId);
     }
 
-    function getRewardFromID(
-        uint256 _rewardID
-    ) public view returns (Reward memory) {
-        return rewards[_rewardID];
-    }
+    // function getRewardFromID(
+    //     uint256 _rewardID
+    // ) public view returns (Reward memory) {
+    //     return rewards[_rewardID];
+    // }
 
-    function getCustomerPoints(address _customer) public view returns (uint256) {
+    function getCustomerPoints(
+        address _customer
+    ) public view returns (uint256) {
         return customers[_customer].pointsByBrand[brandAddress];
     }
 
