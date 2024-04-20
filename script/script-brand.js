@@ -1,14 +1,23 @@
 const hre = require("hardhat");
 
-CONTRACT_ADDR_CUSTOMER = "0x51F3c2C302273e60fc69C1c6E40339f0Bc17cFBE";
+CONTRACT_ADDR_BRAND = "0x0989CD24eF9FCED704bc5f878d68Ff48961C1005";
 
 async function main() {
     //hardhat-ethers
-    const contract = await hre.ethers.getContractAt("TrustPointCustomer", CONTRACT_ADDR_CUSTOMER);
+    const customerAddr = "0x0475Bd09c8dF8C759de6dD8ec5A7285818a680Fd";
 
-    // à changer
-    const tx = await contract.setPlayerInfo('Luca', 200);
-    console.log(tx);
+    const contract = await hre.ethers.getContractAt("TrustPointBrand", CONTRACT_ADDR_BRAND);
+
+    let points = await contract.getCustomerPoints(customerAddr);
+    console.log("Customer points before:", points.toString());
+
+    await contract.createNewReward("First reward", "Easy", 10);
+
+    const data = hre.ethers.encodeBytes32String("");
+    await contract.earnPoints(customerAddr, 10, data);
+
+    points = await contract.getCustomerPoints(customerAddr);
+    console.log("Customer points after:", points.toString());
 }
 
 // We recommend this pattern to be able to use async/await everywhere

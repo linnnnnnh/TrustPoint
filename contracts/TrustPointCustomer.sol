@@ -19,7 +19,7 @@ contract TrustPointCustomer is TrustPointStorage {
         bytes32 _country
     ) public {
         require(!customers[_addr].isMember, "Already customer.");
-        require(brands[_addr].isMember, "Brands cannot register as customer.");
+        require(!brands[_addr].isMember, "Brands cannot register as customer.");
         Customer storage customer = customers[_addr];
         customer.age = _age;
         customer.gender = _gender;
