@@ -1,26 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Home from "../app/home/page";
 import LoginHome from "../app/loginHome/page";
-import { useUserContext, UserContextProvider } from "../contexts/UserContext";
+// import { useUserContext, UserContextProvider } from "../contexts/UserContext";
 
-
-// Token ID session to detect if the wallet is connected
-// const isWalletConnected = false; // Set this to true to see the Home component
-
-const HomePage = () => {
-  const { isConnected } = useUserContext();
-
+const App = () => {
+  const isConnected = false;
 
   return (
-    <UserContextProvider>
-    <main className="flex min-h-screen flex-col items-center justify-between">
-      {isConnected ? <Home /> : <LoginHome />}
-    </main>
-    </UserContextProvider>
- 
+  
+      <main className="flex min-h-screen flex-col items-center justify-between">
+        {isConnected ? <Home /> : <LoginHome />}
+      </main>
+    
   );
 };
 
-export default HomePage;
+export default App;

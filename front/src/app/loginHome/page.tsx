@@ -1,10 +1,13 @@
 "use client";
 
+import React, { useEffect } from "react";
+
 import NavBar from "../../components/NavBar";
 import Web3AuthLogin from "../../components/Web3AuthLogin";
 
 
 export default function LoginHome() {
+
   return (
     <>
       <NavBar />

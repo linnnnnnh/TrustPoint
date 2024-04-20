@@ -38,6 +38,10 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    console.log('Is connected:', isConnected);
+  }, [isConnected]);
+
   return (
     <UserContext.Provider value={{ isConnected, token }}>
       {children}

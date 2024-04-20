@@ -13,13 +13,13 @@ import {
   FaUser,
 
 } from "react-icons/fa";
-
+import {useUserContext} from "../contexts/UserContext";
 
 
 export default function NavBar() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
-  
+
 
   return (
     <Navbar fluid rounded className="fixed top-0 w-full bg-white py-5 border-b border-grey z-10">
@@ -37,7 +37,7 @@ export default function NavBar() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link href="/" active className="text-lg flex justify-left items-center">
+        <Navbar.Link href="/home" active className="text-lg flex justify-left items-center">
           <FaHome className="mr-2 ml-2 md:ml-0" /> Home
         </Navbar.Link>
         <Navbar.Link as={Link} href="#" className="text-lg flex justify-left items-center">

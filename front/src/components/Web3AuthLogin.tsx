@@ -90,6 +90,7 @@ function Web3AuthLogin() {
     useState<WalletServicesPlugin | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [tokenId, setTokenId] = useState(null);
+  const [address, setAddress] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -250,6 +251,10 @@ function Web3AuthLogin() {
       return;
     }
     await web3auth.logout();
+  
+    // Clear session information
+    // localStorage.clear();
+  
     setLoggedIn(false);
   };
 
@@ -361,8 +366,16 @@ function Web3AuthLogin() {
     }
     const rpc = new RPC(web3auth.provider as IProvider);
     const address = await rpc.getAccounts();
-    // uiConsole(address);
+    setAddress(address[0]);
     console.log(address);
+  
+    // Create a JSON object with the address
+    const data = {
+      address: address[0]
+    };
+  
+    // Save the JSON object to localStorage
+    localStorage.setItem('address', JSON.stringify(data));
   };
 
   const readContract = async () => {

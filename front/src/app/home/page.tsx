@@ -1,11 +1,14 @@
 "use client";
 
+import React, { useEffect } from "react";
 import NavBar from "../../components/NavBar";
 import { Button, Card } from "flowbite-react";
 
 import Footer from "../../components/Footer";
 
 export default function Home() {
+
+
   return (
     <>
       <NavBar />
