@@ -6,7 +6,8 @@ import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 
 const useAuth = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [web3auth, setWeb3auth] = useState(null);
 
   const clientId =
   "BLsAgZAaq1X0jFUxiKcWkMO9EjlA5Qb7HjVbWDdHLLHQsyovE9V9daN2ul08Sj9NxUG770uOeoKtYUS0pksWItY";

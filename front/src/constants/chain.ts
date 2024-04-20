@@ -17,7 +17,7 @@ export const sepoliaChain: Chain = {
     token: 'ETH',
     shortName: 'arbsep',
     label: 'Arbitrum Sepolia',
-    rpcUrl: 'https://arbitrum-sepolia.blockpi.network/v1/rpc/public',
+    rpcUrl: 'https://rpc.ankr.com/arbitrum_sepolia',
     blockExplorerUrl: 'https://sepolia-explorer.arbitrum.io',
     color: '#fbc02d',
     isStripePaymentsEnabled: false,
