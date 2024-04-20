@@ -17,26 +17,24 @@ contract TrustPointBrand is
     /// Packed variables
     uint8 public constant ID_POINTS = 0; // fungible token ID
     address public brandAddress;
-    bool public started;
-    bool public ended;
 
     uint256 public rewardID; // starting ID for NFT rewards
 
     event RewardCreated(uint256 indexed rewardID);
-    event PointsEarned(address indexed customer, uint256 indexed amount);
-    event RewardChosen(address indexed customer, uint256 indexed rewardID);
-    event RewardUsed(address indexed customer, uint256 indexed rewardID);
-    event End();
+    // event PointsEarned(address indexed customer, uint256 indexed amount);
+    // event RewardChosen(address indexed customer, uint256 indexed rewardID);
+    // event RewardUsed(address indexed customer, uint256 indexed rewardID);
+    // event End();
 
     /// @dev fill in the uri!!!
     constructor(
         address _brandAddress,
         bytes32 _brandName,
         BrandBizType _businessType,
-        address _signProtocolAddress
-    ) ERC1155("") SignProtocolForLoyalty(_signProtocolAddress) {
+        address _signProtocolAddress,
+        address _customerAddress
+    ) ERC1155("") SignProtocolForLoyalty(_signProtocolAddress, _customerAddress) {
         brandAddress = _brandAddress;
-        _grantRole(DEFAULT_ADMIN_ROLE, _brandAddress);
         _grantRole(BRAND_ROLE, _brandAddress);
         _grantRole(BURNER_ROLE, _brandAddress);
 
@@ -67,26 +65,15 @@ contract TrustPointBrand is
         emit RewardCreated(rewardID);
 
         rewardID++;
-        started = true;
     }
 
-    function activateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
-        require(rewards[_rewardID].id != 0, "Reward not yet created");
-        require(
-            rewards[_rewardID].activated == false,
-            "Reward already activated"
-        );
+    // function activateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
+    //     require(rewards[_rewardID].id != 0, "Not yet created");
 
-        rewards[_rewardID].activated = true;
-    }
+    //     rewards[_rewardID].activated = true;
+    // }
 
     // function deactivateReward(uint256 _rewardID) public onlyRole(BRAND_ROLE) {
-    //     require(rewards[_rewardID].id != 0, "Reward not yet created");
-    //     require(
-    //         rewards[_rewardID].activated == true,
-    //         "Reward already deactivated"
-    //     );
-
     //     rewards[_rewardID].activated = false;
     // }
 
@@ -96,14 +83,11 @@ contract TrustPointBrand is
         uint256 _points,
         bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
-        require(started, "No program available.");
-
         _mint(_customer, ID_POINTS, _points, _data);
 
-        customers[_customer].totalPoints += _points;
-        customers[_customer].pointsByBrand[msg.sender] += _points;
+        customerContract.addCustomerPoints(_customer, brandAddress, _points);
 
-        emit PointsEarned(_customer, _points);
+        // emit PointsEarned(_customer, _points);
     }
 
     /// Choose the reward for customer (NFT)
@@ -112,13 +96,12 @@ contract TrustPointBrand is
         uint256 _rewardID,
         bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
-        require(_customer != address(0), "Invalid address");
         require(rewards[_rewardID].activated == true, "Reward not activated");
 
         uint256 rewardThreshold = rewards[_rewardID].pointsRequired;
 
         require(
-            customers[_customer].pointsByBrand[msg.sender] >= rewardThreshold,
+            customerContract.getCustomerPoints(_customer, brandAddress) >= rewardThreshold,
             "Not enough points"
         );
 
@@ -126,49 +109,37 @@ contract TrustPointBrand is
         _mint(_customer, _rewardID, 1, _data);
 
         /// Decrement the points from the customer record
-        customers[_customer].totalPoints -= rewardThreshold;
-        customers[_customer].pointsByBrand[msg.sender] -= rewardThreshold;
+        customerContract.removeCustomerPoints(_customer, brandAddress, rewardThreshold);
 
         /// Burn the fungible tokens (points)
         _burnTokens(_customer, ID_POINTS, rewardThreshold);
 
-        emit RewardChosen(_customer, _rewardID);
+        // emit RewardChosen(_customer, _rewardID);
     }
 
-    // function customerUsedReward(
-    //     address _customer,
-    //     uint256 _rewardID
-    // ) public onlyRole(BRAND_ROLE) {
-    //     require(_customer != address(0), "Invalid address");
-    //     require(rewards[_rewardID].id != 0, "Reward doesn't exists");
-    //     require(
-    //         balanceOf(_customer, _rewardID) >= 1,
-    //         "Customer don't have this reward"
-    //     );
+    function customerUsedReward(
+        address _customer,
+        uint256 _rewardID
+    ) public onlyRole(BRAND_ROLE) {
+        require(
+            balanceOf(_customer, _rewardID) >= 1,
+            "Don't have reward"
+        );
 
-    //     _burnTokens(_customer, _rewardID, 1);
+        _burnTokens(_customer, _rewardID, 1);
 
-    //     emit RewardUsed(_customer, _rewardID);
-    // }
-
-    /// End the loyalty program
-    // function endProgram() public onlyRole(BRAND_ROLE) {
-    //     require(started, "Program not started");
-    //     require(!ended, "Program already ended");
-    //     ended = true;
-    //     started = false;
-    //     emit End();
-    // }
+        // emit RewardUsed(_customer, _rewardID);
+    }
 
     /// @dev can be transformed into an airdrop function with condition
-    // function mintBatch(
-    //     address to,
-    //     uint256[] memory ids,
-    //     uint256[] memory points,
-    //     bytes memory data
-    // ) public onlyRole(BRAND_ROLE) {
-    //     _mintBatch(to, ids, points, data);
-    // }
+    function mintBatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory points,
+        bytes memory data
+    ) public onlyRole(BRAND_ROLE) {
+        _mintBatch(to, ids, points, data);
+    }
 
     // function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
     //     _setURI(newuri);
@@ -180,17 +151,17 @@ contract TrustPointBrand is
         return super.supportsInterface(interfaceId);
     }
 
-    // function getRewardFromID(
-    //     uint256 _rewardID
-    // ) public view returns (Reward memory) {
-    //     return rewards[_rewardID];
-    // }
-
-    function getCustomerPoints(
-        address _customer
-    ) public view returns (uint256) {
-        return customers[_customer].pointsByBrand[brandAddress];
+    function getRewardFromID(
+        uint256 _rewardID
+    ) public view returns (Reward memory) {
+        return rewards[_rewardID];
     }
+
+    // function getCustomerPoints(
+    //     address _customer
+    // ) public view returns (uint256) {
+    //     return customerContract.getCustomerPoints(_customer, brandAddress);
+    // }
 
     /*///////////////////////////////////////////////////////////////
                             Internal functions

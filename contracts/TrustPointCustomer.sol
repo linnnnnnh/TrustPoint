@@ -3,12 +3,30 @@ pragma solidity ^0.8.20;
 
 import "./TrustPointStorage.sol";
 
-contract TrustPointCustomer is TrustPointStorage {
+contract TrustPointCustomer {
     address public immutable owner; // owner: TrustPoint
+
+    /// Array to store all Customer struct of the plateform 
+    address[] public allCustomers;
+
+    /// ???Mapping from brand => (registered customers => isMember)
+    mapping(address => Customer) public customers;
+    mapping(address => mapping(address => bool)) public customerBrands;
+
+    /// Customer member
+    struct Customer {
+        address customerAddress;
+        uint256 age;
+        bytes32 gender;
+        bytes32 country;
+        uint256 totalPoints;
+        bool isMember;
+        /// Mapping from brand => points
+        mapping(address => uint256) pointsByBrand;
+    }
 
     constructor() {
         owner = msg.sender;
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /// Customer registers themselves on TrustPoint
@@ -19,7 +37,7 @@ contract TrustPointCustomer is TrustPointStorage {
         bytes32 _country
     ) public {
         require(!customers[_addr].isMember, "Already customer.");
-        require(!brands[_addr].isMember, "Brands cannot register as customer.");
+        // require(!brands[_addr].isMember, "Brands cannot register as customer.");
         Customer storage customer = customers[_addr];
         customer.age = _age;
         customer.gender = _gender;
@@ -84,5 +102,19 @@ contract TrustPointCustomer is TrustPointStorage {
             }
         }
         return count;
+    }
+
+    function getCustomerPoints(address _customer, address _brand) public view returns (uint256) {
+        return customers[_customer].pointsByBrand[_brand];
+    }
+
+    function addCustomerPoints(address _customer, address _brand, uint256 _points) public {
+        customers[_customer].totalPoints += _points;
+        customers[_customer].pointsByBrand[_brand] += _points;
+    }
+
+    function removeCustomerPoints(address _customer, address _brand, uint256 _points) public {
+        customers[_customer].totalPoints -= _points;
+        customers[_customer].pointsByBrand[_brand] -= _points;
     }
 }

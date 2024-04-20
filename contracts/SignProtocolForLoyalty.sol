@@ -7,12 +7,14 @@ import {DataLocation} from "@ethsign/sign-protocol-evm/src/models/DataLocation.s
 import "./TrustPointStorage.sol";
 import "./TrustPointCustomer.sol";
 
-contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
+contract SignProtocolForLoyalty is TrustPointStorage{
     ISP public spInstance;
     uint64 public schemaId;
+    TrustPointCustomer customerContract;
 
-    constructor(address _instance) {
+    constructor(address _instance, address _customerAddress) {
         spInstance = ISP(_instance);
+        customerContract = TrustPointCustomer(_customerAddress);
     }
 
     function setSPInstance(address _instance) external {
@@ -24,17 +26,17 @@ contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
         schemaId = _schemaId;
     }
 
-    event PointsConfirmed(
-        address customer,
-        uint256 points,
-        address brand,
-        uint64 attestationId
-    );
-    event GetPotentialCustomers(
-        address[] customer,
-        uint256 pointsThreshold,
-        string brand
-    );
+    // event PointsConfirmed(
+    //     address customer,
+    //     uint256 points,
+    //     address brand,
+    //     uint64 attestationId
+    // );
+    // event GetPotentialCustomers(
+    //     address[] customer,
+    //     uint256 pointsThreshold,
+    //     string brand
+    // );
 
     /// Attestion for brand owner to check the required threshold of points for reward redemption
     function confirmPointsForRewards(
@@ -45,9 +47,7 @@ contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
     ) public returns (uint64) {
         setSchemaID(_schemaId);
 
-        bool checkPoints = customers[_customer].pointsByBrand[_brand] >=
-            _points;
-        require(checkPoints, "Insufficient points, attestation refused.");
+        require(customerContract.getCustomerPoints(_customer, _brand) >= _points, "Not Enough Points");
 
         bytes[] memory recipients = new bytes[](1);
         recipients[0] = abi.encode(msg.sender);
@@ -67,7 +67,7 @@ contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
             data: encodedData
         });
         uint64 attestationId = spInstance.attest(a, "", "", "");
-        emit PointsConfirmed(_customer, _points, _brand, attestationId);
+        // emit PointsConfirmed(_customer, _points, _brand, attestationId);
         return attestationId;
     }
 
@@ -80,12 +80,12 @@ contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
     ) public returns (uint64) {
         setSchemaID(_schemaId);
 
-        address[] memory potentialCustomers = getCustomersPerBrand(
+        address[] memory potentialCustomers = customerContract.getCustomersPerBrand(
             _brandAddr,
             _pointsThreshold
         );
 
-        require(potentialCustomers.length >= 1, "No eligible customers");
+        require(potentialCustomers.length >= 1, "Not Eligible");
 
         bytes[] memory recipients = new bytes[](1);
         recipients[0] = abi.encode(msg.sender);
@@ -109,11 +109,11 @@ contract SignProtocolForLoyalty is TrustPointStorage, TrustPointCustomer {
             data: encodedData
         });
         uint64 attestationId = spInstance.attest(a, "", "", "");
-        emit GetPotentialCustomers(
-            potentialCustomers,
-            _pointsThreshold,
-            _brandName
-        );
+        // emit GetPotentialCustomers(
+        //     potentialCustomers,
+        //     _pointsThreshold,
+        //     _brandName
+        // );
         return attestationId;
     }
 }

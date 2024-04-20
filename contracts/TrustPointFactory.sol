@@ -11,13 +11,15 @@ contract TrustPointFactory {
         address _brandAddress,
         bytes32 _brandName,
         TrustPointStorage.BrandBizType _businessType,
-        address _signProtocolAddress
+        address _signProtocolAddress,
+        address _customerAddress
     ) public returns (uint256) {
         TrustPointBrand newProgram = new TrustPointBrand(
             _brandAddress,
             _brandName,
             _businessType,
-            _signProtocolAddress
+            _signProtocolAddress,
+            _customerAddress
         );
         programsList.push(newProgram);
 
