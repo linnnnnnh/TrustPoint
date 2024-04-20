@@ -49,8 +49,8 @@ export default function NavBar() {
         <Navbar.Link href="#" className="text-lg flex justify-left items-center">
           <FaTasks className="mr-2 ml-2 md:ml-0" /> Challenges
         </Navbar.Link>
-        <Navbar.Link href="#" className="text-lg flex justify-left items-center">
-          <FaUser className="mr-2 ml-2 md:ml-0" /> Profil
+        <Navbar.Link href="/profile" className="text-lg flex justify-left items-center">
+          <FaUser className="mr-2 ml-2 md:ml-0" /> Profile
         </Navbar.Link>
                 
       </Navbar.Collapse>

@@ -323,16 +323,6 @@ function Web3AuthLogin() {
     uiConsole("Chain Switched");
   };
 
-  const getAccounts = async () => {
-    if (!web3auth?.provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const rpc = new RPC(web3auth.provider as IProvider);
-    const address = await rpc.getAccounts();
-    uiConsole(address);
-  };
-
   const getBalance = async () => {
     if (!web3auth?.provider) {
       uiConsole("provider not initialized yet");
@@ -363,6 +353,17 @@ function Web3AuthLogin() {
     uiConsole(signedMessage);
   };
   */
+
+  const getAccounts = async () => {
+    if (!web3auth?.provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(web3auth.provider as IProvider);
+    const address = await rpc.getAccounts();
+    // uiConsole(address);
+    console.log(address);
+  };
 
   const readContract = async () => {
     if (!web3auth?.provider) {
@@ -430,6 +431,7 @@ function Web3AuthLogin() {
   const loginAndRedirect = async () => {
     await login(); // Assuming login is an async function
     await authenticateUser();
+    await getAccounts();
     router.push("/home");
   };
 
