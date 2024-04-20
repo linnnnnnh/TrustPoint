@@ -37,7 +37,7 @@ export default function NavBar() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link href="#" active className="text-lg flex justify-left items-center">
+        <Navbar.Link href="/" active className="text-lg flex justify-left items-center">
           <FaHome className="mr-2 ml-2 md:ml-0" /> Home
         </Navbar.Link>
         <Navbar.Link as={Link} href="#" className="text-lg flex justify-left items-center">
