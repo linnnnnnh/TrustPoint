@@ -4,10 +4,11 @@ import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import {Button} from "flowbite-react";
-// import "./Web3AuthLogin.css";
-// import RPC from "./viem"; // for using viem
+
+import RPC from "./viem"; // for using viem
 // import RPC from "./web3RPC";
 // import RPC from "./ethersRPC"; // for using ethers.js
+// source here: https://github.dev/Web3Auth/web3auth-pnp-examples/tree/main/web-modal-sdk/blockchain-connection-examples/evm-modal-example
 
 // Providers
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
@@ -370,7 +371,7 @@ function Web3AuthLogin() {
     uiConsole(privateKey);
   };
 
-  function uiConsole(...args: any[]): void {
+  function uiConsole(...args: unknown[]): void {
     const el = document.querySelector("#console>p");
     if (el) {
       el.innerHTML = JSON.stringify(args || {}, null, 2);
