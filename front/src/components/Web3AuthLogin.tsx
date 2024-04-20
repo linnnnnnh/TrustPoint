@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from 'next/navigation'
 import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { Web3Auth, Web3AuthOptions } from "@web3auth/modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import {Button} from "flowbite-react";
+import { Button } from "flowbite-react";
 
 import RPC from "./viem"; // for using viem
 // import RPC from "./web3RPC";
@@ -28,7 +30,7 @@ import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 const clientId =
   "BLsAgZAaq1X0jFUxiKcWkMO9EjlA5Qb7HjVbWDdHLLHQsyovE9V9daN2ul08Sj9NxUG770uOeoKtYUS0pksWItY";
 
-// chainConfig for Polygon Mainnet 
+// chainConfig for Polygon Mainnet
 const chainConfig = {
   chainId: "0x13882", // Please use 0x1 for ETH Mainnet, 0x89 for Polygon Mainnet
   rpcTarget: "https://rpc.ankr.com/polygon_amoy",
@@ -39,7 +41,6 @@ const chainConfig = {
   tickerName: "MATIC",
   logo: "https://cryptologos.cc/logos/polygon-matic-logo.png",
 };
-
 
 // chainConfig for Arbitrum Testnet
 /*
@@ -88,6 +89,7 @@ function Web3AuthLogin() {
   const [walletServicesPlugin, setWalletServicesPlugin] =
     useState<WalletServicesPlugin | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [tokenId, setTokenId] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -229,6 +231,9 @@ function Web3AuthLogin() {
     console.log(idToken);
   };
 
+
+
+  // only for social login
   const getUserInfo = async () => {
     if (!web3auth) {
       uiConsole("web3auth not initialized yet");
@@ -236,7 +241,7 @@ function Web3AuthLogin() {
     }
     const user = await web3auth.getUserInfo();
     // uiConsole(user);
-    console.log(user);  
+    console.log(user);
   };
 
   const logout = async () => {
@@ -248,6 +253,8 @@ function Web3AuthLogin() {
     setLoggedIn(false);
   };
 
+  // Not used in this example
+  /*
   const showWCM = async () => {
     if (!walletServicesPlugin) {
       uiConsole("torus plugin not initialized yet");
@@ -355,6 +362,7 @@ function Web3AuthLogin() {
     const signedMessage = await rpc.signMessage();
     uiConsole(signedMessage);
   };
+  */
 
   const readContract = async () => {
     if (!web3auth?.provider) {
@@ -401,14 +409,12 @@ function Web3AuthLogin() {
   const loggedInView = (
     <>
       <div className="flex-container flex flex-col justify-center items-center">
-        
         <div>
-          <Button
-            onClick={logout}
-            gradientDuoTone="greenToBlue"
-          >
-            Log Out
-          </Button>
+          <Link href="/loginHome">
+            <Button onClick={logout} gradientDuoTone="greenToBlue">
+              Log Out
+            </Button>
+          </Link>
         </div>
       </div>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
@@ -420,11 +426,15 @@ function Web3AuthLogin() {
     </>
   );
 
+  const router = useRouter();
+  const loginAndRedirect = async () => {
+    await login(); // Assuming login is an async function
+    await authenticateUser();
+    router.push("/home");
+  };
+
   const unloggedInView = (
-    <Button
-      onClick={login}      
-      gradientDuoTone="greenToBlue"
-    >
+    <Button onClick={loginAndRedirect} gradientDuoTone="greenToBlue">
       Login
     </Button>
   );

@@ -17,7 +17,7 @@ export default function Footer() {
           <h2 className="text-indigo-900 md:text-xl text-base font-semibold mb-6">
             Present your QR code for scanning
           </h2>
-          <div className="border border-black p-6 rounded-xl">
+          <div className="border border-black p-6 rounded-xl items-center">
             <QRCode value="http://github.com" size={250} fgColor="#331b5c" />
           </div>
           <Button
