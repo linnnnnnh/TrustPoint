@@ -29,5 +29,11 @@ module.exports = {
       url: process.env.AVAIL_SEPOLIA_URL,
       accounts: [process.env.PRIVATE_KEY]
     }
+  },
+
+  etherscan: {
+    apiKey: {
+      arbitrumSepolia: process.env.ARBISCAN_API_KEY
+    }
   }
 };
