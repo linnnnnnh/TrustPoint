@@ -97,6 +97,15 @@ function Web3AuthLogin() {
   const [address, setAddress] = useState(null);
 
   useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum
+        .request({ method: 'eth_chainId' })
+        .then((chainId) => console.log('Chain ID:', chainId))
+        .catch((error) => console.error(error));
+    }
+  }, []);
+
+  useEffect(() => {
     const init = async () => {
       try {
         const web3auth = new Web3Auth(web3AuthOptions as Web3AuthOptions);

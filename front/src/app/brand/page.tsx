@@ -21,7 +21,7 @@ declare global {
 }
 
 interface Reward {
-  questId: string;
+  id: string;
   name: string;
   description: string;
   pointsRequired: number;
@@ -87,7 +87,41 @@ export default function BrandProfile() {
     createReward();
   }, []);
 
+  useEffect(() => {
+    async function fetchRewards() {
+      try {
+        const contract = new ethers.Contract(contractAddress, ABI, signer);
+
+        const rewardIds = [1, 2, 3, 4, 5, 6];
+
+        const fetchedRewards: Reward[] = [];
+        for (const id of rewardIds) {
+          const rewardResult = await contract.getRewardFromID(id);
+          const reward = {
+            id: rewardResult[0].toString(),
+            name: rewardResult[1],
+            description: rewardResult[2],
+            pointsRequired: rewardResult[3].toString(),
+            activated: rewardResult[4]
+          };
+          console.log(reward);
+          fetchedRewards.push(reward);
+        }
+
+        setRewards(fetchedRewards);
+      } catch (error) {
+        console.error("Failed to fetch rewards:", error);
+      }
+    }
+
+    fetchRewards();
+  }, [signer]);
+
   const chooseReward = useCallback(async (rewardID: string) => {
+    if (!rewardID) {
+      console.error("Reward ID is undefined");
+      return;
+    }
     try {
       console.log("Reward ID:", rewardID)
       if (signer && userAddress) {
@@ -106,28 +140,6 @@ export default function BrandProfile() {
       console.error("Failed to choose rewards:", error);
     }
   }, [signer, userAddress]);
-
-  useEffect(() => {
-    async function fetchRewards() {
-      try {
-        const contract = new ethers.Contract(contractAddress, ABI, signer);
-
-        const rewardIds = [1, 2, 3, 4, 5, 6];
-
-        const fetchedRewards: Reward[] = [];
-        for (const id of rewardIds) {
-          const reward = await contract.getRewardFromID(id);
-          fetchedRewards.push(reward);
-        }
-
-        setRewards(fetchedRewards);
-      } catch (error) {
-        console.error("Failed to fetch rewards:", error);
-      }
-    }
-
-    fetchRewards();
-  }, [signer]);
 
   return (
     <>
@@ -220,9 +232,9 @@ export default function BrandProfile() {
                     {reward.pointsRequired.toString()} points required
                   </p>
                   <p className="text-xl font-bold text-black">
-                    You own: {rewardBalance[parseInt(reward.questId)]}
+                    You own: {rewardBalance[parseInt(reward.id)]}
                   </p>
-                  <Button onClick={() => chooseReward(reward.questId)} className="bg-yellow-400">Claim now</Button>
+                  <Button onClick={() => chooseReward(reward.id)} className="bg-yellow-400">Claim now</Button>
                 </Card>
               </div>
             ))}
