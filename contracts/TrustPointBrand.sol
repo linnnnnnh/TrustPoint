@@ -21,6 +21,7 @@ contract TrustPointBrand is
     uint256 public rewardID; // starting ID for NFT rewards
 
     event RewardCreated(uint256 indexed rewardID);
+
     // event PointsEarned(address indexed customer, uint256 indexed amount);
     // event RewardChosen(address indexed customer, uint256 indexed rewardID);
     // event RewardUsed(address indexed customer, uint256 indexed rewardID);
@@ -33,7 +34,10 @@ contract TrustPointBrand is
         BrandBizType _businessType,
         address _signProtocolAddress,
         address _customerAddress
-    ) ERC1155("") SignProtocolForLoyalty(_signProtocolAddress, _customerAddress) {
+    )
+        ERC1155("")
+        SignProtocolForLoyalty(_signProtocolAddress, _customerAddress)
+    {
         brandAddress = _brandAddress;
         _grantRole(BRAND_ROLE, _brandAddress);
         _grantRole(BURNER_ROLE, _brandAddress);
@@ -101,7 +105,8 @@ contract TrustPointBrand is
         uint256 rewardThreshold = rewards[_rewardID].pointsRequired;
 
         require(
-            customerContract.getCustomerPoints(_customer, brandAddress) >= rewardThreshold,
+            customerContract.getCustomerPoints(_customer, brandAddress) >=
+                rewardThreshold,
             "Not enough points"
         );
 
@@ -109,7 +114,11 @@ contract TrustPointBrand is
         _mint(_customer, _rewardID, 1, _data);
 
         /// Decrement the points from the customer record
-        customerContract.removeCustomerPoints(_customer, brandAddress, rewardThreshold);
+        customerContract.removeCustomerPoints(
+            _customer,
+            brandAddress,
+            rewardThreshold
+        );
 
         /// Burn the fungible tokens (points)
         _burnTokens(_customer, ID_POINTS, rewardThreshold);
@@ -121,24 +130,23 @@ contract TrustPointBrand is
         address _customer,
         uint256 _rewardID
     ) public onlyRole(BRAND_ROLE) {
-        require(
-            balanceOf(_customer, _rewardID) >= 1,
-            "Don't have reward"
-        );
+        require(balanceOf(_customer, _rewardID) >= 1, "Don't have reward");
 
         _burnTokens(_customer, _rewardID, 1);
 
         // emit RewardUsed(_customer, _rewardID);
     }
 
-    /// @dev can be transformed into an airdrop function with condition
-    function mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory points,
-        bytes memory data
+    /// Airdrop to potential customer, returned by targetPotentialCustomers()
+    function airdrop(
+        address[] calldata _wAddresses,
+        uint256 _rewardID,
+        bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
-        _mintBatch(to, ids, points, data);
+        require(_wAddresses.length > 0, "No target");
+        for (uint i; i < _wAddresses.length; i++) {
+            _mint(_wAddresses[i], _rewardID, 1, _data);
+        }
     }
 
     // function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
