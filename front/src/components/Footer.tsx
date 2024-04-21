@@ -76,7 +76,7 @@ export default function Footer() {
           "0x00"
         );
         console.log('contract.earnPoints executed successfully');
-        window.alert("Points earned by Customer on his wallet: " + userAddress);
+        window.alert("Points earned by Customer on his wallet: " + userAddress + points);
       } else {
         console.log('signer or userAddress is not defined');
       }
