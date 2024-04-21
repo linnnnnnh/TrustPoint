@@ -34,6 +34,8 @@ $ npm run dev
 
 That's it! Now you can go to [http://localhost:3000/](http://localhost:3000/) and interact with the application!
 
+Pour accéder aux fonctions côté Brand, ajoutez `/brand` dans l'URL.
+
 ### Technology used
 
 **Sign Protocol** (https://app.sign.global/): we expand the capabilities of loyalty programs by incorporating Sign Protocol, an attestation protocol that verifies on-chain information. This integration manifests in two key features:
