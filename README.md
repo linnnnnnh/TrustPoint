@@ -1,6 +1,6 @@
 # TrustPoint
 
-TrustPoint is .....
+TrustPoint revolutionizes loyalty programs with blockchain technology. This dApp allows brands to create token-based rewards, supporting permissionless co-branding to attract new customers. Users earn and redeem points across brands, leveraging NFTs for transferable rewards.
 
 ## Pre-requisite
 

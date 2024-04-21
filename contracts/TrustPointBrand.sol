@@ -143,7 +143,6 @@ contract TrustPointBrand is
         uint256 _rewardID,
         bytes memory _data
     ) public onlyRole(BRAND_ROLE) {
-        require(_wAddresses.length > 0, "No target");
         for (uint i; i < _wAddresses.length; i++) {
             _mint(_wAddresses[i], _rewardID, 1, _data);
         }
