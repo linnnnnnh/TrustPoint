@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import NavBar from "../../components/NavBar";
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { ethers } from "ethers";
 // import ABI from "./contract-abi.json";
 
-const ABI = require("../contract-abi.json");
+import contractData from "./abi-customer.json";
+const ABI = contractData.abi;
 
 interface Ethereum {
   isMetaMask: boolean;
@@ -19,10 +20,21 @@ declare global {
   }
 }
 
+interface Customer {
+  contractAddress: string;
+  age: string;
+  gender: string;
+  country: string;
+}
+
 export default function Profile() {
   const [userAddress, setAddress] = useState<string | null>(null);
   const [customerPoints, setCustomerPoints] = useState<number | null>(null);
   const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null);
+  const [age, setAge] = useState<string | null>(null);
+  const [gender, setGender] = useState<string | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
+  const [customerRegistered, setCustomerRegistered] = useState<boolean>(false);
 
   const getAddress = () => {
     const data = localStorage.getItem("address");
@@ -49,18 +61,31 @@ export default function Profile() {
 
   const contractAddress = "0x063DF104b96DE5828b1f3430668C35A3d97Fc73F";
 
+  
+
+  const registerCustomer = useCallback(async () => {
+    if (contractAddress && signer && age && gender && country) {
+      const contract = new ethers.Contract(contractAddress, ABI, signer);
+  
+      // Convert the age to a uuint
+      const ageAsUint = ethers.toNumber(age);
+  
+      // Convert the gender and country to bytes32
+      const genderAsBytes32 = ethers.encodeBytes32String(gender);
+      const countryAsBytes32 = ethers.encodeBytes32String(country);
+  
+      // Now you can call your smart contract function with these values
+      await contract.registerCustomer(contractAddress, ageAsUint, genderAsBytes32, countryAsBytes32);
+  
+      setCustomerRegistered(true);
+    }
+  }, [contractAddress, signer, age, gender, country]);
+  
   useEffect(() => {
-    const fetchCustomerPoints = async () => {
-      if (userAddress && signer) {
-        const contract = new ethers.Contract(contractAddress, ABI, signer);
-        const points = await contract.getCustomerPoints(userAddress);
-        setCustomerPoints(points);
-      }
-    };
+    registerCustomer();
+  }, [registerCustomer]);
 
-    fetchCustomerPoints();
-  }, [userAddress, signer]);
-
+  
 
   return (
     <>
@@ -72,67 +97,54 @@ export default function Profile() {
           </h1>
 
           <div className="flex flex-col gap-2 px-12">
+            <p>{customerPoints}</p>
+
             <div>
               <div className="block mb-2">
-                <Label
-                  className="font-bold "
-                  htmlFor="points"
-                  value="Customer Points"
-                />
+                <Label className="font-bold" htmlFor="Age" value="Age" />
               </div>
               <TextInput
-                id="Points"
-                type="text"
+                id="Age"
+                type="number"
                 sizing="md"
-                value={customerPoints || ""}
-                readOnly
+                value={age || ""}
+                onChange={(e) => setAge(e.target.value)}
               />
-            </div>
-            <div>
-              <div className="block mb-2">
-                <Label
-                  className="font-bold "
-                  htmlFor="base"
-                  value="Wallet address"
-                />
-              </div>
-              <TextInput
-                id="Address"
-                type="text"
-                sizing="md"
-                value={userAddress || ""}
-                readOnly
-              />
-            </div>
-            <div>
-              <div className="block mb-2">
-                <Label className="font-bold" htmlFor="base" value="Age" />
-              </div>
-              <TextInput id="Age" type="date" sizing="md" />
             </div>
             <div className="block">
               <Label className="font-bold" htmlFor="gender" value="Gender" />
             </div>
-            <Select id="gender" required>
+            <Select
+              id="gender"
+              value={gender || ""}
+              required
+              onChange={(e) => setGender(e.target.value)}
+            >
               <option>Male</option>
               <option>Female</option>
               <option>N/A</option>
             </Select>
             <div className="block">
-              <Label className="font-bold" htmlFor="countries" value="Select your country" />
+              <Label
+                className="font-bold"
+                htmlFor="countries"
+                value="Select your country"
+              />
             </div>
-            <Select id="countries" required>
+            <Select
+              id="countries"
+              required
+              value={country || ""}
+              onChange={(e) => setCountry(e.target.value)}
+            >
               <option>United States</option>
               <option>Canada</option>
               <option>France</option>
               <option>Germany</option>
             </Select>
           </div>
-          
 
-
-          
-          <Button className="mt-6" color="warning">
+          <Button className="mt-6" color="warning" onClick={registerCustomer}>
             Submit
           </Button>
         </section>
