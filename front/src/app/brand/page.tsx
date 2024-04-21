@@ -41,6 +41,7 @@ export default function BrandProfile() {
 
   const [rewardCreated, setRewardCreated] = useState(false);
   const [rewards, setRewards] = useState<Reward[]>([]);
+  const [rewardBalance, setRewardBalance] = useState<number[]>([0]);
 
   const getAddress = () => {
     const data = localStorage.getItem("address");
@@ -85,6 +86,26 @@ export default function BrandProfile() {
   useEffect(() => {
     createReward();
   }, []);
+
+  const chooseReward = useCallback(async (rewardID: string) => {
+    try {
+      console.log("Reward ID:", rewardID)
+      if (signer && userAddress) {
+        const contract = new ethers.Contract(contractAddress, ABI, signer);
+        await contract.chooseReward(
+          userAddress,
+          rewardID,
+          ""
+        );
+
+        const balance = await contract.balanceOf(userAddress, rewardID);
+
+        setRewardBalance(balance);
+      }
+    } catch (error) {
+      console.error("Failed to choose rewards:", error);
+    }
+  }, [signer, userAddress]);
 
   useEffect(() => {
     async function fetchRewards() {
@@ -179,6 +200,9 @@ export default function BrandProfile() {
         </section>
 
         <section className="w-full flex flex-col justify-center items-center mt-6 border-t border-grey bg-gray-100 pb-6">
+          <h1 className="mt-9 text-2xl font-semibold text-blue-900 mb-4">
+            REWARDS
+          </h1>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 justify-center md:justify-start items-center animate-slide-in">
             {rewards.map((reward, index) => (
               <div key={index} className="mt-6 card">
@@ -195,6 +219,10 @@ export default function BrandProfile() {
                   <p className="text-xl font-bold text-black">
                     {reward.pointsRequired.toString()} points required
                   </p>
+                  <p className="text-xl font-bold text-black">
+                    You own: {rewardBalance[parseInt(reward.questId)]}
+                  </p>
+                  <Button onClick={() => chooseReward(reward.questId)} className="bg-yellow-400">Claim now</Button>
                 </Card>
               </div>
             ))}
