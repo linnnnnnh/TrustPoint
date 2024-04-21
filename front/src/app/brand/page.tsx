@@ -41,7 +41,8 @@ export default function BrandProfile() {
 
   const [rewardCreated, setRewardCreated] = useState(false);
   const [rewards, setRewards] = useState<Reward[]>([]);
-  const [rewardBalance, setRewardBalance] = useState<number[]>([0]);
+  const [rewardBalance, setRewardBalance] = useState<string[]>([]);
+  const [lastBalance, setLastBalance] = useState<string | null>(null);
 
   const getAddress = () => {
     const data = localStorage.getItem("address");
@@ -49,7 +50,8 @@ export default function BrandProfile() {
     if (data) {
       const parsedData = JSON.parse(data);
       const userAddress = parsedData.address;
-      setAddress(userAddress);
+      // setAddress(userAddress);
+      setAddress("0x15A513E25B1CaC165468DdB538bb29D028b38998");
     } else {
       console.log("No address found");
     }
@@ -67,7 +69,8 @@ export default function BrandProfile() {
   }, []);
 
   // const contractAddress = "0x2960736f4ee28B2791777178D628D27208f82452";
-  const contractAddress = "0xFdA2D0fcC2C14f37413652A45f1068D33D5Eb59D";
+  // const contractAddress = "0xFdA2D0fcC2C14f37413652A45f1068D33D5Eb59D";
+  const contractAddress = "0x9583D7394a51b29F3505ee4b98E64D5ec44207A4";
 
   // Define the createReward function
   const createReward = useCallback(async () => {
@@ -104,7 +107,7 @@ export default function BrandProfile() {
             pointsRequired: rewardResult[3].toString(),
             activated: rewardResult[4]
           };
-          console.log(reward);
+
           fetchedRewards.push(reward);
         }
 
@@ -116,6 +119,29 @@ export default function BrandProfile() {
 
     fetchRewards();
   }, [signer]);
+
+  useEffect(() => {
+    async function fetchBalance() {
+      try {
+        const contract = new ethers.Contract(contractAddress, ABI, signer);
+
+        const rewardIds = [1, 2, 3, 4, 5, 6];
+
+        const fetchedBalance: string[] = [];
+        for (const id of rewardIds) {
+          const balance = (await contract.balanceOf(userAddress, id)).toString();
+
+          fetchedBalance.push(balance);
+        }
+
+        setRewardBalance(fetchedBalance);
+      } catch (error) {
+        console.error("Failed to fetch rewards:", error);
+      }
+    }
+
+    fetchBalance();
+  }, [signer, lastBalance]);
 
   const chooseReward = useCallback(async (rewardID: string) => {
     if (!rewardID) {
@@ -129,12 +155,14 @@ export default function BrandProfile() {
         await contract.chooseReward(
           userAddress,
           rewardID,
-          ""
+          "0x00"
         );
 
-        const balance = await contract.balanceOf(userAddress, rewardID);
+        const balance = (await contract.balanceOf(userAddress, rewardID)).toString();
 
-        setRewardBalance(balance);
+        console.log("Reward balance:", balance);
+        
+        setLastBalance(balance);
       }
     } catch (error) {
       console.error("Failed to choose rewards:", error);
@@ -232,7 +260,7 @@ export default function BrandProfile() {
                     {reward.pointsRequired.toString()} points required
                   </p>
                   <p className="text-xl font-bold text-black">
-                    You own: {rewardBalance[parseInt(reward.id)]}
+                    You own: {rewardBalance[parseInt(reward.id) - 1]}
                   </p>
                   <Button onClick={() => chooseReward(reward.id)} className="bg-yellow-400">Claim now</Button>
                 </Card>
