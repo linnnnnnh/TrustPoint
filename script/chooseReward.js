@@ -9,7 +9,7 @@ async function main() {
 
     const brandContract = await hre.ethers.getContractAt("TrustPointBrand", CONTRACT_ADDR_BRAND);
 
-    const rewardChosen = 2;
+    const rewardChosen = 1;
 
     let userBalance = await brandContract.balanceOf(customerAddr, rewardChosen);
     let userBalancePoints = await brandContract.balanceOf(customerAddr, 0);

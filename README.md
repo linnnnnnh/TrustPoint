@@ -2,25 +2,20 @@
 
 TrustPoint revolutionizes loyalty programs with blockchain technology. This dApp allows brands to create token-based rewards, supporting permissionless co-branding to attract new customers. Users earn and redeem points across brands, leveraging NFTs for transferable rewards.
 
-## Pre-requisite
-
+![](front/public/banniere.png)
 
 ## Set-up
 
-- Open a terminal, clone and enter the project:
+### Deploy Front-end
+
+- Open a terminal, clone the project & go to the `front` directory:
 
 ```
 $ git clone https://github.com/linnnnnnh/TrustPoint
 ```
 
 ```
-$ cd TrustPoint
-```
-
-- Create a copy of the environment file and fill in your private key:
-
-```
-$ cp .env.example .env
+$ cd TrustPoint/front
 ```
 
 - Install dependencies:
@@ -29,66 +24,27 @@ $ cp .env.example .env
 $ npm install
 ```
 
-- Compile Solidity files:
+- Deploy front-end:
 
 ```
-$ npx hardhat compile
+$ npm run dev
 ```
 
-- Deploy the Factory contract:
+That's it! Now you can go to [http://localhost:3000/](http://localhost:3000/) and interact with the application!
 
-```
-$ npx hardhat ignition deploy ignition/modules/TrustPointFactory.js --network arbitrumSepolia
-```
+### Deploy smart-contracts
 
-- Deploy the Customer contract:
+The smart-contracts are already deployed, you can find them at these addresses:
 
-```
-$ npx hardhat ignition deploy ignition/modules/TrustPointCustomer.js --network arbitrumSepolia
-```
+- **Arbitrum Sepolia**:
+    - FactoryContract: **0xDf1b12Efbc559ace5a86a1A5F9d97389B62B9984**
+    - CustomerContract: **0x4c491aBC0Ae7D76466999c8876D2901B4Ede3d7A**
 
-- Fill the addresses of these 2 contracts in the `.env` file at `CONTRACT_ADDR_FACTORY=` and `CONTRACT_ADDR_CUSTOMER=`.
+- **Gnosis Chiado**:
+    - FactoryContract: **0xd74DA75E8Fd52f1bFac615f01Fe1ea96c679bbe8**
+    - CustomerContract: **0x7F8fb89Ed62069FA4b5972C4804bAec563Db0cb5**
 
-Now your contracts are created and your project is ready!
+#### If you want to deploy the smart-contracts by yourself you can follow these tutorials:
 
-## Interact with the contracts
-
-You can interact with the contract easily directly from our application here:
-
-If you prefer you can also do it directly with lines of code as explain in the next section.
-
-### Register new customers in your program (with lines of code):
-
-- Register as a new customer (the user need to register before earning loyalty points):
-
-```
-$ npx hardhat run script/registerCustomer.js --network arbitrumSepolia
-```
-
-### Created a new Loyalty Program as a Brand (with lines of code):
-
-- Create a new program for your brand:
-
-```
-$ npx hardhat run script/createProgram.js  --network arbitrumSepolia
-```
-
-- Fill the address of this new contract in the `.env` file at `CONTRACT_ADDR_BRAND=`.
-
-- Add a new rewards in your program & add points to the user:
-
-```
-$ npx hardhat run script/createReward.js  --network arbitrumSepolia
-```
-
-- Let users select & own their rewards:
-
-```
-$ npx hardhat run script/chooseReward.js  --network arbitrumSepolia
-```
-
-- Let users use their rewards:
-
-```
-$ npx hardhat run script/useReward.js  --network arbitrumSepolia
-```
+- [Deploy on Arbitrum Sepolia](./docs/README.deploy.arbitrum.md)
+- [Deploy on Gnosis Chiado](./docs/README.deploy.gnosis.md)
