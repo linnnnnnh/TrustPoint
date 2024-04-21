@@ -1,12 +1,26 @@
 "use client"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import QRCode from "qrcode.react";
 import { Button, Modal } from "flowbite-react";
+import { ethers } from "ethers";
+
+import contractData from "../app/brand/abi-brand.json";
+const ABI = contractData.abi;
+
+interface Points {
+  userAddress: string;
+  points: number;
+  data: string;
+  
+}
 
 export default function Footer() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userAddress, setAddress] = useState<string | null>(null);
-  const [userPoints, setUserPoints] = useState<number | null>(null);
+  const [points, setPoints] = useState<number | null>(null);
+  const [data, setData] = useState<string | null>(null);
+  const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null);
+
 
   const getAddress = () => {
     const data = localStorage.getItem("address");
@@ -15,15 +29,27 @@ export default function Footer() {
       const parsedData = JSON.parse(data);
       const userAddress = parsedData.address;
       setAddress(userAddress);
+      console.log("User Address from Footer:", userAddress);
     } else {
       console.log("No address found");
     }
   };
 
+  useEffect(() => {
+    const getSigner = async () => {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      setSigner(signer);
+    };
+
+    getSigner();
+    getAddress();
+  }, []);
+
   const getUserPoints = async () => {
     // Replace this with your actual function to get the user's points
     const points = 100;
-    setUserPoints(points);
+    setPoints(points);
   };
 
   useEffect(() => {
@@ -31,10 +57,38 @@ export default function Footer() {
     getUserPoints();
   }, []);
 
+  
+
+  const earnPoints = useCallback(async (rewardID: string) => {
+    console.log('earnPoints called');
+    if (!points) {
+      console.error("No point available to earn rewards");
+      return;
+    }
+    try {
+      console.log("Reward ID:", rewardID)
+      if (signer && userAddress) {
+        console.log('signer and userAddress are defined');
+        const contract = new ethers.Contract(userAddress, ABI, signer);
+        await contract.earnPoints(
+          userAddress,
+          points,
+          "0x00"
+        );
+        console.log('contract.earnPoints executed successfully');
+        window.alert("Points earned by Customer on his wallet: " + userAddress);
+      } else {
+        console.log('signer or userAddress is not defined');
+      }
+    } catch (error) {
+      console.error("Failed to earn points:", error);
+    }
+  }, [signer, points, userAddress]);
+
 
   const toggleModal = () => setModalIsOpen(!modalIsOpen);
 
-  const qrValue = JSON.stringify({ address: userAddress, points: userPoints });
+  const qrValue = JSON.stringify({ address: userAddress, points: points });
 
   return (
     <footer
@@ -56,6 +110,14 @@ export default function Footer() {
           >
             Fermer
           </Button>
+          <p className="text-black text-sm mt-4">Function when Brand scan the QR code below</p> 
+          <Button
+            className="bg-indigo-400 text-white"
+            onClick={() => earnPoints("Points earned by Customer")}
+          >
+            Earn points
+          </Button>
+          
         </div>
        
       </Modal>
